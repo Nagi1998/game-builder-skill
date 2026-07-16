@@ -111,6 +111,7 @@ On a clear stop command:
 4. Load the GDD contract and generate a complete `待批准` GDD with `gdd_approved: false`.
 5. Label every filled decision `系统默认` with a short reason.
 6. Explain that “停止”只结束问答，不代表批准 GDD，也不授权开发。
+7. 停止后只允许一个审批问题：展示完整 GDD 后，询问要修改当前版本还是明确批准。不得再问设计问题。
 
 ### Mainstream defaults
 
@@ -118,11 +119,14 @@ Use only for decisions the learner has not made:
 
 | Gap | Default |
 |---|---|
+| 游戏名称 | Use a short provisional title based on the confirmed theme, or “[主角/主题]小冒险” when no theme exists |
+| 世界、角色与动机 | A safe fictional setting; preserve any confirmed character, otherwise use a neutral explorer/helper whose motive is to complete the visible goal |
 | Game form | Single-player lightweight 2D collect-or-challenge game; use low-load 3D only when an existing learner idea clearly needs space/depth |
 | Session and content | 3–5 minutes per run, three short levels, gradual difficulty |
 | Core loop | Move or click → collect/avoid → immediate feedback → reach the goal |
 | Input | Arrow keys/WASD plus Space; equivalent on-screen touch controls |
 | Outcome | Win by reaching or collecting the target; lose when a resource reaches zero or time ends; quick retry |
+| 界面与引导 | Start, pause, play, result, and retry screens plus one short first-play instruction |
 | Presentation | Original high-contrast geometry, limited animation, optional muteable sound |
 | Data | No login, server, upload, tracking, chat, advertising, or payment |
 | Accessibility | Visible focus, keyboard-complete flow, touch parity, reduced-motion support |

@@ -126,6 +126,7 @@ class CoreSkillContractTests(unittest.TestCase):
             "gdd_approved: false",
             "不代表批准 GDD",
             "不得覆盖已确认决定",
+            "停止后只允许一个审批问题",
         ):
             self.assertIn(phrase, combined)
 
@@ -164,6 +165,21 @@ class GDDContractTests(unittest.TestCase):
             "gdd_approved: false",
         ):
             self.assertIn(phrase, text)
+
+    def test_default_completion_covers_every_gdd_section(self) -> None:
+        combined = (
+            read("references/interview-protocol.md")
+            + read("references/gdd-template.md")
+        )
+        for phrase in (
+            "完整 15 章",
+            "所有缺失字段",
+            "游戏名称",
+            "世界、角色与动机",
+            "界面与引导",
+            "不得留空",
+        ):
+            self.assertIn(phrase, combined)
 
     def test_gdd_keeps_child_content_safety_boundaries(self) -> None:
         text = read("references/gdd-template.md")
@@ -243,6 +259,20 @@ class DevelopmentContractTests(unittest.TestCase):
             "运行时网络请求",
             "10 MB",
             "集成显卡",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_lightweight_3d_remains_direct_open_compatible(self) -> None:
+        text = read("references/web-game-development.md")
+        for phrase in (
+            "已批准 GDD 已明确",
+            "无需重新审批",
+            "只有新增依赖改变体验、范围或资源预算时",
+            "预先打包为单一普通脚本",
+            "程序生成几何体",
+            "不在运行时加载 GLTF",
+            "内嵌",
+            "file://",
         ):
             self.assertIn(phrase, text)
 

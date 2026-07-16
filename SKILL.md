@@ -61,7 +61,7 @@ Do not expose hidden reasoning. Share a short learner-friendly progress recap wh
 - 第 18 轮是最早正常结束点，第 22 轮是绝对上限；目标是大致保持 18–22 轮，而不是机械问满。
 - When `valid_rounds < 18`, continue one linked question. When `18 <= valid_rounds < 22`, generate the GDD as soon as all six coverage areas are complete, core conflicts are resolved, and the Web MVP is feasible; 只有关键缺口才延长。
 - When `valid_rounds == 22`, do not ask again. Use safe mainstream defaults for remaining gaps and conflicts, then generate the GDD. 不得提出第 23 个设计问题。
-- If the learner sends “停止”, “停止提问”, or an equally clear request to end this interview, set `stop_requested: true`, stop asking immediately, and complete all remaining design fields with safe mainstream defaults. Do not confuse in-game wording such as “角色停止移动” with this command.
+- If the learner sends “停止”, “停止提问”, or an equally clear request to end this interview, set `stop_requested: true`, stop asking design questions immediately, and complete all remaining design fields with safe mainstream defaults. Do not confuse in-game wording such as “角色停止移动” with this command.
 
 ## Phase 2 — GDD
 
@@ -71,6 +71,7 @@ Read `references/gdd-template.md` completely only when Phase 1 ends through `cov
 - On `round-cap` or `stop`, preserve every confirmed learner decision, use the documented mainstream defaults for every remaining field, and record each one in `defaulted_decisions` as `系统默认` with a reason. 默认内容不得覆盖已确认决定。
 - Keep `gdd_approved: false` while the learner reviews or edits it.
 - “停止”只结束问答，不代表批准 GDD，不授权开发。
+- 停止后只允许一个审批问题：完整 GDD 生成后，询问学习者要修改当前版本还是明确批准；这不是新的设计问题。
 - Increment `gdd_version` after each revision.
 - Ask for explicit approval of the current version.
 - Silence, “差不多”, partial approval, or continuing discussion is not approval.
@@ -94,8 +95,8 @@ Enter this phase only when `gdd_approved: true` for the current GDD version.
 | `valid_rounds < 18` without stop | Continue one linked interview question; no final GDD or game code |
 | `18 <= valid_rounds < 22` with complete coverage and resolved conflicts | Generate a complete GDD with `completion_reason: coverage-complete` |
 | `18 <= valid_rounds < 22` with a critical gap | Ask only the highest-priority linked question |
-| `valid_rounds == 22` | Ask no more questions; default remaining fields and generate a complete GDD with `completion_reason: round-cap` |
-| Clear “停止” command | Ask no more questions; default remaining fields and generate a complete GDD with `completion_reason: stop` and `gdd_approved: false` |
+| `valid_rounds == 22` | Ask no more design questions; default remaining fields and generate a complete GDD with `completion_reason: round-cap` |
+| Clear “停止” command | Ask no more design questions; default remaining fields and generate a complete GDD with `completion_reason: stop` and `gdd_approved: false`; then allow one approval question |
 | Learner requests code early | Explain the next missing decision and ask one easy linked question |
 | GDD exists but is not approved | Revise or request explicit approval; no code or dependency installation |
 | Approved GDD | Begin the development protocol |
