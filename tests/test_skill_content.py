@@ -53,5 +53,52 @@ class CoreSkillContractTests(unittest.TestCase):
         self.assertNotIn("第一个问题后的每一问", text)
 
 
+class GDDContractTests(unittest.TestCase):
+    def test_gdd_reference_exists(self) -> None:
+        self.assertTrue((ROOT / "references/gdd-template.md").is_file())
+
+    def test_gdd_template_has_all_numbered_sections(self) -> None:
+        text = read("references/gdd-template.md")
+        for number in range(1, 16):
+            self.assertRegex(text, rf"(?m)^{number}\.\s")
+        self.assertIn("15. 决策来源摘要", text)
+
+    def test_gdd_gate_requires_rounds_coverage_conflicts_and_approval(self) -> None:
+        text = read("references/gdd-template.md")
+        for phrase in (
+            "valid_rounds >= 20",
+            "六个覆盖主题",
+            "冲突",
+            "明确批准",
+            "gdd_approved",
+        ):
+            self.assertIn(phrase, text)
+
+
+class DevelopmentContractTests(unittest.TestCase):
+    def test_development_reference_exists(self) -> None:
+        self.assertTrue(
+            (ROOT / "references/web-game-development.md").is_file()
+        )
+
+    def test_development_reference_has_required_deliverables(self) -> None:
+        text = read("references/web-game-development.md")
+        for phrase in (
+            "game/README.md",
+            "game/PLAYTEST.md",
+            "键盘",
+            "触控",
+            "控制台错误",
+            "验收标准",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_development_starts_only_from_approved_gdd(self) -> None:
+        text = read("references/web-game-development.md")
+        self.assertIn("gdd_approved: true", text)
+        self.assertIn("HTML", text)
+        self.assertRegex(text, r"Phaser|原生")
+
+
 if __name__ == "__main__":
     unittest.main()
