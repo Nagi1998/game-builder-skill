@@ -6,6 +6,8 @@ Collect enough learner-owned design decisions to write a buildable GDD without t
 
 ## Language adaptation
 
+所有面向学生的对话始终使用适合小学、初中生理解的中文。年龄段适配只调整中文表达的复杂度，不改变对话语言。
+
 Record one explanation preference without requesting personal identity:
 
 | `age_band` | Language |

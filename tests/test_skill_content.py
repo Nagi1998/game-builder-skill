@@ -38,6 +38,20 @@ class CoreSkillContractTests(unittest.TestCase):
         for phrase in ("真实姓名", "学校", "联系方式", "精确位置"):
             self.assertIn(phrase, combined)
 
+    def test_learner_facing_language_is_always_child_friendly_chinese(self) -> None:
+        for relative_path in ("SKILL.md", "references/interview-protocol.md"):
+            text = read(relative_path)
+            self.assertIn(
+                "所有面向学生的对话始终使用适合小学、初中生理解的中文",
+                text,
+            )
+            self.assertIn("年龄段适配只调整中文表达的复杂度", text)
+
+    def test_linkage_starts_after_the_first_design_question(self) -> None:
+        text = read("SKILL.md")
+        self.assertIn("第一个设计问题后的每一问", text)
+        self.assertNotIn("第一个问题后的每一问", text)
+
 
 if __name__ == "__main__":
     unittest.main()
