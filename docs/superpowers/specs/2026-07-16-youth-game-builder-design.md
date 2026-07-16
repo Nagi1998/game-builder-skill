@@ -56,8 +56,9 @@ game-builder-skill/
 ├── evals/
 │   └── evals.json
 └── docs/
-    ├── implementation-plan.md
-    └── superpowers/specs/2026-07-16-youth-game-builder-design.md
+    └── superpowers/
+        ├── plans/2026-07-16-youth-game-builder.md
+        └── specs/2026-07-16-youth-game-builder-design.md
 ```
 
 各模块职责：
