@@ -17,7 +17,16 @@ class CoreSkillContractTests(unittest.TestCase):
 
     def test_core_state_and_gates_are_explicit(self) -> None:
         text = read("SKILL.md")
-        self.assertIn("valid_rounds >= 20", text)
+        for phrase in (
+            "target_rounds: 18..22",
+            "hard_round_cap: 22",
+            "stop_requested: true | false",
+            "completion_reason: coverage-complete | round-cap | stop",
+            "defaulted_decisions",
+            "18 <= valid_rounds < 22",
+            "valid_rounds == 22",
+        ):
+            self.assertIn(phrase, text)
         self.assertIn("gdd_approved", text)
         self.assertIn("一次只问一个主要问题", text)
         self.assertRegex(text, r"此前回答|之前回答")
@@ -89,6 +98,37 @@ class CoreSkillContractTests(unittest.TestCase):
         self.assertIn("A confirmation-only reply does not count.", text)
         self.assertNotIn("A correction-only reply does not count.", text)
 
+    def test_interview_is_adaptive_and_never_requests_round_23(self) -> None:
+        combined = read("SKILL.md") + read("references/interview-protocol.md")
+        for phrase in (
+            "第 18 轮是最早正常结束点",
+            "第 22 轮是绝对上限",
+            "不得提出第 23 个设计问题",
+            "只有关键缺口才延长",
+        ):
+            self.assertIn(phrase, combined)
+        self.assertNotIn("valid_rounds >= 20", combined)
+        self.assertNotIn(
+            "Twenty effective learner answers are the minimum",
+            combined,
+        )
+
+    def test_stop_command_completes_design_without_approval(self) -> None:
+        combined = (
+            read("SKILL.md")
+            + read("references/interview-protocol.md")
+            + read("references/gdd-template.md")
+        )
+        for phrase in (
+            "停止提问",
+            "不再提出任何设计问题",
+            "系统默认",
+            "gdd_approved: false",
+            "不代表批准 GDD",
+            "不得覆盖已确认决定",
+        ):
+            self.assertIn(phrase, combined)
+
 
 class GDDContractTests(unittest.TestCase):
     def test_gdd_reference_exists(self) -> None:
@@ -103,11 +143,25 @@ class GDDContractTests(unittest.TestCase):
     def test_gdd_gate_requires_rounds_coverage_conflicts_and_approval(self) -> None:
         text = read("references/gdd-template.md")
         for phrase in (
-            "valid_rounds >= 20",
+            "coverage-complete",
+            "round-cap",
+            "stop",
+            "18 <= valid_rounds <= 22",
+            "valid_rounds == 22",
             "六个覆盖主题",
             "冲突",
             "明确批准",
             "gdd_approved",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_gdd_marks_defaulted_decisions_and_stays_pending(self) -> None:
+        text = read("references/gdd-template.md")
+        for phrase in (
+            "学习者决定 | 系统默认",
+            "默认理由",
+            "待批准",
+            "gdd_approved: false",
         ):
             self.assertIn(phrase, text)
 
@@ -153,7 +207,44 @@ class DevelopmentContractTests(unittest.TestCase):
         text = read("references/web-game-development.md")
         self.assertIn("gdd_approved: true", text)
         self.assertIn("HTML", text)
-        self.assertRegex(text, r"Phaser|原生")
+        self.assertIn("原生 HTML5、CSS 和 JavaScript", text)
+
+    def test_output_is_offline_web_game_with_optional_lightweight_3d(self) -> None:
+        combined = read("SKILL.md") + read("references/web-game-development.md")
+        for phrase in (
+            "game/index.html",
+            "静态",
+            "离线",
+            "直接双击",
+            "DOM",
+            "Canvas 2D",
+            "WebGL",
+            "Three.js",
+            "3D",
+            "Windows 10/11",
+            "macOS",
+            "不要求独立显卡",
+        ):
+            self.assertIn(phrase, combined)
+
+    def test_development_avoids_complex_or_high_load_defaults(self) -> None:
+        text = read("references/web-game-development.md")
+        for phrase in (
+            "WebGPU",
+            "WASM",
+            "Unity",
+            "Unreal",
+            "Godot",
+            "实时阴影",
+            "全屏后处理",
+            "npm",
+            "后端",
+            "CDN",
+            "运行时网络请求",
+            "10 MB",
+            "集成显卡",
+        ):
+            self.assertIn(phrase, text)
 
     def test_development_keeps_child_content_safety_boundaries(self) -> None:
         text = read("references/web-game-development.md")
@@ -192,12 +283,35 @@ class RepositoryCompletenessTests(unittest.TestCase):
         text = read("README.md")
         for phrase in (
             "我想创作一个游戏",
-            "不少于 20 轮",
+            "18–22 轮",
+            "停止",
             "GDD",
             "明确批准",
+            "Web 游戏",
+            "轻量 3D",
             "python3 scripts/validate_skill.py .",
         ):
             self.assertIn(phrase, text)
+
+    def test_behavior_evals_cover_round_cap_stop_and_3d(self) -> None:
+        import json
+
+        payload = json.loads(read("evals/evals.json"))
+        prompts = "\n".join(item["prompt"] for item in payload["evals"])
+        expectations = "\n".join(
+            expectation
+            for item in payload["evals"]
+            for expectation in item["expectations"]
+        )
+        self.assertGreaterEqual(len(payload["evals"]), 6)
+        for phrase in ("18轮", "22轮", "停止", "3D"):
+            self.assertIn(phrase, prompts)
+        for phrase in (
+            "no 23rd",
+            "gdd_approved remains false",
+            "lightweight WebGL",
+        ):
+            self.assertIn(phrase, expectations)
 
     def test_readme_summarizes_child_content_safety(self) -> None:
         text = read("README.md")
