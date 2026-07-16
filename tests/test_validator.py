@@ -113,19 +113,139 @@ class RepositoryValidationTests(unittest.TestCase):
             "trigger evals must contain exactly 10 true and 10 false",
         )
 
-    def test_removed_gdd_round_gate_is_reported(self) -> None:
+    def test_removed_gdd_earliest_round_gate_is_reported(self) -> None:
         with repository_copy() as repository:
             self.replace_once(
                 repository,
                 "references/gdd-template.md",
-                "`valid_rounds >= 20`",
+                "`18 <= valid_rounds <= 22`",
                 "`valid_rounds recorded`",
             )
             errors = validate_skill.validate_repository(repository)
 
         self.assert_error_contains(
             errors,
-            "references/gdd-template.md: missing 20-round generation gate",
+            "references/gdd-template.md: missing round-18 earliest generation gate",
+        )
+
+    def test_removed_gdd_hard_round_cap_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/gdd-template.md",
+                "`valid_rounds == 22`",
+                "`valid_rounds is high enough`",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/gdd-template.md: missing round-22 hard cap",
+        )
+
+    def test_removed_stop_completion_rule_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/interview-protocol.md",
+                "Apply the stop-command procedure immediately. Do not recover with another question.",
+                "Acknowledge the learner message.",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/interview-protocol.md: missing stop-without-another-question rule",
+        )
+
+    def test_removed_stop_pending_gdd_state_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/interview-protocol.md",
+                "generate a complete `待批准` GDD with `gdd_approved: false`",
+                "generate a complete GDD",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/interview-protocol.md: missing pending GDD state after stop",
+        )
+
+    def test_removed_default_provenance_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/gdd-template.md",
+                "`学习者决定 | 系统默认`",
+                "`决定`",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/gdd-template.md: missing learner/default provenance",
+        )
+
+    def test_removed_offline_web_entry_point_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/web-game-development.md",
+                "唯一入口为 `game/index.html`",
+                "入口由项目决定",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/web-game-development.md: missing static Web entry point",
+        )
+
+    def test_removed_direct_open_compatibility_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/web-game-development.md",
+                "`game/index.html` 必须能从文件管理器直接双击离线运行",
+                "`game/index.html` 需要开发服务器运行",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/web-game-development.md: missing direct offline startup",
+        )
+
+    def test_removed_windows_mac_compatibility_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/web-game-development.md",
+                "Windows 10/11：当前稳定版 Chrome、Edge 或 Firefox；",
+                "支持桌面浏览器；",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/web-game-development.md: missing Windows/macOS compatibility target",
+        )
+
+    def test_removed_lightweight_3d_budget_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/web-game-development.md",
+                "默认关闭实时阴影、复杂物理、全屏后处理、高开销粒子和大量透明物体",
+                "按视觉效果需要配置渲染",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/web-game-development.md: missing lightweight 3D rendering budget",
         )
 
     def test_removed_gdd_coverage_or_conflict_gate_is_reported(self) -> None:
