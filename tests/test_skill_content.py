@@ -146,7 +146,7 @@ class GDDContractTests(unittest.TestCase):
             "coverage-complete",
             "round-cap",
             "stop",
-            "18 <= valid_rounds <= 22",
+            "18 <= valid_rounds < 22",
             "valid_rounds == 22",
             "六个覆盖主题",
             "冲突",

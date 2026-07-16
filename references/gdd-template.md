@@ -8,7 +8,7 @@
 
 | `completion_reason` | 通过条件 |
 | --- | --- |
-| `coverage-complete` | `18 <= valid_rounds <= 22`，六个覆盖主题均为 `complete`，所有影响核心玩法或实现范围的冲突均已解决，最小 Web 游戏可实施 |
+| `coverage-complete` | `18 <= valid_rounds < 22`，六个覆盖主题均为 `complete`，所有影响核心玩法或实现范围的冲突均已解决，最小 Web 游戏可实施 |
 | `round-cap` | `valid_rounds == 22`；不得继续提问，用系统默认补齐缺口并以最安全简单的方案解决剩余冲突 |
 | `stop` | 收到明确停止提问指令；不得继续提问，用系统默认补齐所有剩余字段和冲突 |
 

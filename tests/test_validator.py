@@ -118,7 +118,7 @@ class RepositoryValidationTests(unittest.TestCase):
             self.replace_once(
                 repository,
                 "references/gdd-template.md",
-                "`18 <= valid_rounds <= 22`",
+                "`18 <= valid_rounds < 22`",
                 "`valid_rounds recorded`",
             )
             errors = validate_skill.validate_repository(repository)

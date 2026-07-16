@@ -104,7 +104,7 @@ CONTENT_CONTRACTS = {
     ),
     "references/gdd-template.md": (
         (
-            r"18\s*<=\s*valid_rounds\s*<=\s*22",
+            r"18\s*<=\s*valid_rounds\s*<\s*22",
             "missing round-18 earliest generation gate",
         ),
         (
