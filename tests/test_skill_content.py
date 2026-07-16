@@ -38,6 +38,30 @@ class CoreSkillContractTests(unittest.TestCase):
         for phrase in ("真实姓名", "学校", "联系方式", "精确位置"):
             self.assertIn(phrase, combined)
 
+    def test_child_content_safety_rule_is_operational(self) -> None:
+        for relative_path in ("SKILL.md", "references/interview-protocol.md"):
+            text = read(relative_path)
+            for phrase in (
+                "现实危险",
+                "自残",
+                "仇恨",
+                "性内容",
+                "赌博",
+                "真钱",
+                "战利品箱",
+                "暗黑模式",
+                "剥削性变现",
+                "虚构",
+                "非血腥",
+                "非性化",
+                "不歧视",
+                "一个安全替代方案",
+                "一个关联设计问题",
+                "可信任的成年人",
+                "当地急救服务",
+            ):
+                self.assertIn(phrase, text)
+
     def test_learner_facing_language_is_always_child_friendly_chinese(self) -> None:
         for relative_path in ("SKILL.md", "references/interview-protocol.md"):
             text = read(relative_path)
@@ -47,10 +71,23 @@ class CoreSkillContractTests(unittest.TestCase):
             )
             self.assertIn("年龄段适配只调整中文表达的复杂度", text)
 
-    def test_linkage_starts_after_the_first_design_question(self) -> None:
-        text = read("SKILL.md")
-        self.assertIn("第一个设计问题后的每一问", text)
-        self.assertNotIn("第一个问题后的每一问", text)
+    def test_first_design_question_linkage_depends_on_ledger_content(self) -> None:
+        for relative_path in ("SKILL.md", "references/interview-protocol.md"):
+            text = read(relative_path)
+            for phrase in (
+                "账本已有任何学习者提供的设计信息",
+                "第一个以及之后的每个设计问题",
+                "账本没有设计信息",
+                "初始创意愿景",
+                "年龄段和解释偏好",
+                "不会消耗或抹去触发消息中的设计信息",
+            ):
+                self.assertIn(phrase, text)
+
+    def test_recap_confirmation_only_reply_does_not_count(self) -> None:
+        text = read("references/interview-protocol.md")
+        self.assertIn("A confirmation-only reply does not count.", text)
+        self.assertNotIn("A correction-only reply does not count.", text)
 
 
 class GDDContractTests(unittest.TestCase):
@@ -71,6 +108,25 @@ class GDDContractTests(unittest.TestCase):
             "冲突",
             "明确批准",
             "gdd_approved",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_gdd_keeps_child_content_safety_boundaries(self) -> None:
+        text = read("references/gdd-template.md")
+        for phrase in (
+            "现实危险",
+            "自残",
+            "仇恨",
+            "性内容",
+            "赌博",
+            "战利品箱",
+            "暗黑模式",
+            "剥削性变现",
+            "虚构",
+            "非血腥",
+            "非性化",
+            "不歧视",
+            "不使用真钱",
         ):
             self.assertIn(phrase, text)
 
@@ -99,6 +155,25 @@ class DevelopmentContractTests(unittest.TestCase):
         self.assertIn("HTML", text)
         self.assertRegex(text, r"Phaser|原生")
 
+    def test_development_keeps_child_content_safety_boundaries(self) -> None:
+        text = read("references/web-game-development.md")
+        for phrase in (
+            "现实危险",
+            "自残",
+            "仇恨",
+            "性内容",
+            "赌博",
+            "战利品箱",
+            "暗黑模式",
+            "剥削性变现",
+            "虚构",
+            "非血腥",
+            "非性化",
+            "不歧视",
+            "不使用真钱",
+        ):
+            self.assertIn(phrase, text)
+
 
 class RepositoryCompletenessTests(unittest.TestCase):
     def test_readme_and_trigger_evals_exist(self) -> None:
@@ -121,6 +196,25 @@ class RepositoryCompletenessTests(unittest.TestCase):
             "GDD",
             "明确批准",
             "python3 scripts/validate_skill.py .",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_readme_summarizes_child_content_safety(self) -> None:
+        text = read("README.md")
+        for phrase in (
+            "现实危险",
+            "自残",
+            "仇恨",
+            "性内容",
+            "赌博",
+            "战利品箱",
+            "暗黑模式",
+            "剥削性变现",
+            "虚构",
+            "非血腥",
+            "非性化",
+            "不歧视",
+            "不使用真钱",
         ):
             self.assertIn(phrase, text)
 

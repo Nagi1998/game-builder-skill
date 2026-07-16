@@ -16,7 +16,7 @@ Record one explanation preference without requesting personal identity:
 | `middle` | Use concise game-design terms with a plain-language explanation. Ask for reasons and tradeoffs when the learner can answer them. |
 | `unknown` | Default to simple Chinese, avoid jargon, and let the learner request more or less detail later. |
 
-The age-band answer never counts as a design round by itself. It may count only if the same learner message also supplies information that independently meets the effective-round definition below.
+The age-band answer never counts as a design round by itself. It may count only if the same learner message also supplies information that independently meets the effective-round definition below. 年龄段和解释偏好只是设置，不会消耗或抹去触发消息中的设计信息。
 
 ## Coverage ledger
 
@@ -47,7 +47,7 @@ Assistant messages never count. A single learner message is at most one round ev
 
 ## Linked-question recipe
 
-Every design question after the first uses these four parts in order. Keep the result natural and brief rather than displaying the labels to the learner.
+当账本已有任何学习者提供的设计信息时，第一个以及之后的每个设计问题都使用下面四个部分，并明确连接账本中的一项具体信息，包括触发消息里的设计信息。只有当账本没有设计信息时，第一个设计问题才可省略连接，并应引出学习者的初始创意愿景；从下一问起使用完整结构。Keep the result natural and brief rather than displaying the labels to the learner.
 
 ### 连接点
 
@@ -87,7 +87,7 @@ Do not ask consecutive stock questions unrelated to previous answers. Coverage d
 
 After every 5 valid rounds—5, 10, 15, 20, and any later multiple of 5—send a separate recap message before asking another design question. Briefly list the decisions now recorded and make “哪里需要纠正？” the only main question in that message.
 
-A correction-only reply does not count. A reply that adds or revises a design decision does count if it meets all effective-round conditions. Update coverage and conflicts after the reply, then resume with one linked design question.
+A confirmation-only reply does not count. A reply that adds or revises a design decision does count if it meets all effective-round conditions. Update coverage and conflicts after the reply, then resume with one linked design question.
 
 ## Recovery rules
 
@@ -99,6 +99,12 @@ A correction-only reply does not count. A reply that adds or revises a design de
 | Learner requests the GDD early | Briefly name the single highest-priority missing decision. Do not draft the final GDD; ask one linked question with easy scaffolding. |
 | Learner requests code early or adds urgency | Do not write code or install dependencies. State that the design or approval gate is still open, identify the next missing decision, and ask one easy linked question. Urgency is not approval. |
 | Conversation resumes later | Restore the ledger from recorded conversation evidence, including `valid_rounds`, coverage, conflicts, GDD version, and approval state. Give a short recap when useful, then continue from the highest-priority open item; do not restart, guess missing decisions, or infer approval. |
+
+## Child-content safety
+
+- 面向儿童时，不展开可操作的现实危险、自残、仇恨式针对、性内容、赌博或真钱随机机制、战利品箱操纵、暗黑模式或剥削性变现。
+- 先保留学习者安全的创作目标，把相关想法转化为虚构、非血腥、非性化、不歧视且不使用真钱的玩法。提供一个安全替代方案，然后继续问一个关联设计问题。
+- 如果学习者表示马上要伤害自己或他人，停止游戏设计访谈，鼓励其立即向可信任的成年人或当地急救服务求助。
 
 ## Privacy boundary
 
