@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:test-driven-development for implementation and superpowers:verification-before-completion before claiming success.
 
-**Goal:** Update `youth-game-builder` so its interview normally ends after 18–22 effective learner answers, handles “停止” by defaulting all remaining design decisions, and develops only lightweight, offline-capable 2D Web games.
+**Goal:** Update `youth-game-builder` so its interview normally ends after 18–22 effective learner answers, handles “停止” by defaulting all remaining design decisions, and develops only lightweight, offline-capable Web games, including low-load 3D when the approved design needs it.
 
 **Architecture:** Keep the existing three-gate workflow (interview → approved GDD → development) and extend its ledger with round-cap, stop, completion-reason, and default-source fields. Put detailed behavioral rules in the references, keep `SKILL.md` as the routing contract, and enforce critical invariants through repository tests and the standalone validator.
 
@@ -13,7 +13,7 @@
 - Preserve all existing child privacy, content-safety, GDD approval, test-first, and browser-verification gates.
 - Treat “停止” as interview completion, never as GDD approval or permission to develop.
 - Never request a 23rd effective answer.
-- Default game output is static 2D HTML/CSS/JavaScript that opens from `game/index.html` without player-installed tooling, network services, or high-end hardware.
+- Default game output is static 2D HTML/CSS/JavaScript. A design that genuinely needs 3D may use WebGL plus one local lightweight library, while still opening from `game/index.html` without player-installed tooling, network services, or high-end hardware.
 - Make production changes only after the matching new tests fail for the expected reason.
 
 ---
@@ -32,9 +32,9 @@ Add focused assertions that require:
 - no design question after the cap;
 - explicit “停止” handling, automatic default completion, and `gdd_approved: false`;
 - defaulted decisions labelled `系统默认`;
-- Web-only static 2D output and `game/index.html`;
-- native HTML/CSS/JavaScript, Canvas 2D/DOM, offline double-click startup, Windows/macOS compatibility;
-- default exclusions for WebGL/3D, heavy frameworks, npm build chains, backend services, CDN and runtime network requests;
+- Web-only static output and `game/index.html`, with 2D as the default and low-load 3D retained for designs that need it;
+- native HTML/CSS/JavaScript, Canvas 2D/DOM, optional WebGL plus one local lightweight 3D library, offline double-click startup, and Windows/macOS compatibility;
+- default exclusions for WebGPU, desktop-grade 3D engines, expensive effects, heavy frameworks, npm build chains, backend services, CDN and runtime network requests;
 - README and evaluation fixtures covering the revised workflow;
 - removal of stale runtime statements that require at least 20 rounds.
 
@@ -100,11 +100,11 @@ Expected: interview/GDD/README tests pass; development-stack assertions may rema
 
 **Step 1: Define the output and default stack**
 
-Require `game/index.html`, native HTML5/CSS/JavaScript, DOM or Canvas 2D, local assets, direct offline double-click startup, keyboard and touch parity, and current mainstream Windows/macOS browsers.
+Require `game/index.html`, native HTML5/CSS/JavaScript, DOM or Canvas 2D by default, optional WebGL plus one local lightweight library when the approved design needs 3D, local assets, direct offline double-click startup, keyboard and touch parity, and current mainstream Windows/macOS browsers.
 
 **Step 2: Define complexity and resource limits**
 
-Default-exclude WebGL/3D/WASM/GPU compute, Phaser/React/Vue, npm build tooling, backends, databases, logins, cloud APIs, CDN/runtime network requests, and first-version assets over 10 MB. Permit at most one lightweight local dependency only through a newly approved GDD.
+Default-exclude WebGPU/WASM/GPU compute, desktop-grade 3D engines, real-time shadows, complex physics, full-screen post-processing, Phaser/React/Vue, npm build tooling, backends, databases, logins, cloud APIs, CDN/runtime network requests, and first-version assets over 10 MB. Permit WebGL and at most one Three.js-class local dependency only when the approved GDD needs 3D; require conservative model, texture, light, and effect budgets.
 
 **Step 3: Extend verification**
 
@@ -189,9 +189,10 @@ Compare baseline and new Skill on:
 1. complete design information at effective round 18;
 2. incomplete design at round 22;
 3. “停止” after a short interview;
-4. development from an approved GDD that asks for a Web game.
+4. development from an approved GDD that asks for a 2D Web game;
+5. development from an approved GDD that genuinely needs a lightweight 3D Web game.
 
-Record whether each response asks another question, generates a pending GDD, exposes defaults, preserves approval, and stays within the lightweight Web stack.
+Record whether each response asks another question, generates a pending GDD, exposes defaults, preserves approval, and stays within the lightweight Web stack. For 3D, also record whether the design avoids high-load rendering and remains suitable for integrated-graphics Windows/macOS computers.
 
 **Step 3: Review the comparison**
 
@@ -227,4 +228,3 @@ Run the Skill packager against an archive of the verified `main` commit. Confirm
 **Step 4: Push and verify**
 
 Push `main` to `Nagi1998/game-builder-skill`, then confirm local `main`, `origin/main`, and the packaged source commit are identical.
-
