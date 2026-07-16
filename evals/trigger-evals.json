@@ -1,0 +1,22 @@
+[
+  {"query": "我想创作一个游戏，但我只有一个会飞的小猫的想法，你能一步一步问我吗？", "should_trigger": true},
+  {"query": "我是六年级学生，想设计一个手机和电脑都能玩的网页游戏。", "should_trigger": true},
+  {"query": "帮我把脑子里的迷宫游戏想法慢慢变成可以开发的设计。", "should_trigger": true},
+  {"query": "我有一个关于海洋环保的游戏点子，不懂编程，想从设计开始。", "should_trigger": true},
+  {"query": "想做自己的小游戏，先问我问题，再整理游戏设计文档。", "should_trigger": true},
+  {"query": "我和同学想创造一个校园科幻游戏，请像游戏设计老师一样引导。", "should_trigger": true},
+  {"query": "能陪初中生从零构思一个浏览器游戏吗？", "should_trigger": true},
+  {"query": "game idea: 一只机器人在垃圾城分类资源，我想把它做成网页游戏", "should_trigger": true},
+  {"query": "我不知道GDD是什么，但我想把自己的故事变成可以玩的游戏。", "should_trigger": true},
+  {"query": "请不要直接替我做，先通过聊天帮我想清楚游戏怎么玩，然后再开发。", "should_trigger": true},
+  {"query": "我想找一个适合小学生玩的免费网页游戏。", "should_trigger": false},
+  {"query": "《我的世界》生存模式第一天应该怎么玩？", "should_trigger": false},
+  {"query": "帮我修复现有game.js里角色碰撞后穿墙的bug。", "should_trigger": false},
+  {"query": "分析2026年中国休闲游戏市场规模和商业机会。", "should_trigger": false},
+  {"query": "给我推荐几款可以课堂使用的数学小游戏。", "should_trigger": false},
+  {"query": "把这份已经完成的GDD翻译成英文，不要改变内容。", "should_trigger": false},
+  {"query": "请评审我们商业手游现有的付费和抽卡系统。", "should_trigger": false},
+  {"query": "解释一下游戏开发中的ECS架构是什么。", "should_trigger": false},
+  {"query": "为已经上线的网页游戏写一份更新公告。", "should_trigger": false},
+  {"query": "我只需要一个HTML贪吃蛇代码示例，不要设计访谈。", "should_trigger": false}
+]

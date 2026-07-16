@@ -100,5 +100,30 @@ class DevelopmentContractTests(unittest.TestCase):
         self.assertRegex(text, r"Phaser|原生")
 
 
+class RepositoryCompletenessTests(unittest.TestCase):
+    def test_readme_and_trigger_evals_exist(self) -> None:
+        self.assertTrue((ROOT / "README.md").is_file())
+        self.assertTrue((ROOT / "evals/trigger-evals.json").is_file())
+
+    def test_trigger_eval_set_is_balanced(self) -> None:
+        import json
+
+        items = json.loads(read("evals/trigger-evals.json"))
+        self.assertEqual(len(items), 20)
+        self.assertEqual(sum(item["should_trigger"] for item in items), 10)
+        self.assertEqual(sum(not item["should_trigger"] for item in items), 10)
+
+    def test_readme_documents_the_exact_trigger_and_gates(self) -> None:
+        text = read("README.md")
+        for phrase in (
+            "我想创作一个游戏",
+            "不少于 20 轮",
+            "GDD",
+            "明确批准",
+            "python3 scripts/validate_skill.py .",
+        ):
+            self.assertIn(phrase, text)
+
+
 if __name__ == "__main__":
     unittest.main()
