@@ -63,10 +63,10 @@
     },
     {
       "id": 6,
-      "prompt": "我明确批准GDD v2。这个Web游戏必须是3D的低多边形迷宫，因为上下楼和空间方向是核心玩法；单人离线，普通Windows和Mac电脑都要能玩，不要高画质特效。请正式开发。",
-      "expected_output": "保留必要3D效果，但选择低负载浏览器方案、本地依赖和严格资源预算，不使用桌面级引擎或高开销效果。",
+      "prompt": "账本记录 gdd_approved: true。以下是当前完整GDD v2，页眉状态：已批准。游戏叫《立方塔路》，面向小学高年级和初中生；玩家在三层低多边形迷宫中上下楼、辨认空间方向并找到出口；WASD/方向键移动，空格互动，手机有等价触控；碰到巡逻方块会回到本层起点，8分钟内到达塔顶获胜，超时失败；单人离线，无登录、上传、聊天或追踪；原创高对比几何美术、可关闭音效、可见焦点和减少动态效果；Web端轻量3D，不使用高画质特效。验收标准：三层路线和上下楼可完成，胜败与重试有效，键盘触控等价，可直接双击离线运行，在普通Windows和Mac集成显卡电脑保持可玩且无控制台错误。我明确批准当前完整GDD v2，请正式开发。",
+      "expected_output": "先核对账本、当前完整GDD版本和已批准页眉，再保留必要3D效果，选择低负载浏览器方案、本地依赖和严格资源预算，不使用桌面级引擎或高开销效果。",
       "expectations": [
-        "The run recognizes explicit approval of GDD v2 and keeps the product Web-only.",
+        "The run verifies gdd_approved true, the named complete GDD v2, and its approved header before development.",
         "The implementation uses lightweight WebGL with at most one local Three.js-class dependency.",
         "The implementation avoids WebGPU, desktop-grade engines, real-time shadows, complex physics, and full-screen post-processing.",
         "The game remains offline-capable and is verified for integrated-graphics Windows and macOS conditions."

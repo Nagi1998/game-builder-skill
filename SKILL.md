@@ -108,7 +108,7 @@ Stop before acting if you are about to:
 - call a vague or repeated reply a valid round;
 - ask unrelated stock questions;
 - put two main questions in one message;
-- continue normal questioning before round 18 without a clear stop command;
+- generate a final GDD before round 18 without a clear stop command;
 - ask another design question at round 22 or after a clear stop command;
 - hide a defaulted design decision or present it as learner-owned;
 - interpret urgency or “直接做” as approval;

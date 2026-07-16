@@ -99,7 +99,8 @@ class CoreSkillContractTests(unittest.TestCase):
         self.assertNotIn("A correction-only reply does not count.", text)
 
     def test_interview_is_adaptive_and_never_requests_round_23(self) -> None:
-        combined = read("SKILL.md") + read("references/interview-protocol.md")
+        skill = read("SKILL.md")
+        combined = skill + read("references/interview-protocol.md")
         for phrase in (
             "第 18 轮是最早正常结束点",
             "第 22 轮是绝对上限",
@@ -111,6 +112,14 @@ class CoreSkillContractTests(unittest.TestCase):
         self.assertNotIn(
             "Twenty effective learner answers are the minimum",
             combined,
+        )
+        self.assertIn(
+            "generate a final GDD before round 18 without a clear stop command",
+            skill,
+        )
+        self.assertNotIn(
+            "continue normal questioning before round 18",
+            skill,
         )
 
     def test_stop_command_completes_design_without_approval(self) -> None:
@@ -343,6 +352,19 @@ class RepositoryCompletenessTests(unittest.TestCase):
             "lightweight WebGL",
         ):
             self.assertIn(phrase, expectations)
+
+    def test_3d_development_eval_preserves_approval_entry_gate(self) -> None:
+        import json
+
+        payload = json.loads(read("evals/evals.json"))
+        item = next(item for item in payload["evals"] if item["id"] == 6)
+        for phrase in (
+            "当前完整GDD v2",
+            "页眉状态：已批准",
+            "gdd_approved: true",
+            "验收标准",
+        ):
+            self.assertIn(phrase, item["prompt"])
 
     def test_readme_summarizes_child_content_safety(self) -> None:
         text = read("README.md")
