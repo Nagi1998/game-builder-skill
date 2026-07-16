@@ -248,6 +248,12 @@ validate_skill = module_from_spec(SPEC)
 SPEC.loader.exec_module(validate_skill)
 
 
+class ValidatorInterfaceTests(unittest.TestCase):
+    def test_required_interfaces_exist(self) -> None:
+        self.assertTrue(hasattr(validate_skill, "parse_frontmatter"))
+        self.assertTrue(hasattr(validate_skill, "validate_repository"))
+
+
 class FrontmatterTests(unittest.TestCase):
     def test_parse_frontmatter_returns_simple_fields(self) -> None:
         text = (
@@ -291,12 +297,55 @@ if __name__ == "__main__":
 Run:
 
 ```bash
-python3 -m unittest tests.test_validator -v
+python3 -m unittest \
+  tests.test_validator.ValidatorInterfaceTests.test_required_interfaces_exist -v
 ```
 
-Expected: import succeeds, then tests fail because `parse_frontmatter` and `validate_repository` do not exist.
+Expected: `FAIL` because `parse_frontmatter` and `validate_repository` do not exist.
 
-- [ ] **Step 7: Implement the validator engine**
+- [ ] **Step 7: Add the smallest interfaces**
+
+Replace `scripts/validate_skill.py` with:
+
+```python
+#!/usr/bin/env python3
+"""Validate the youth-game-builder Skill repository."""
+
+from pathlib import Path
+
+
+def parse_frontmatter(text: str) -> dict[str, str]:
+    return {}
+
+
+def validate_repository(root: Path) -> list[str]:
+    return []
+```
+
+- [ ] **Step 8: Verify the interfaces are GREEN**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_validator.ValidatorInterfaceTests.test_required_interfaces_exist -v
+```
+
+Expected: `OK`.
+
+- [ ] **Step 9: Run the behavior tests and verify RED**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_validator.FrontmatterTests \
+  tests.test_validator.RepositoryValidationTests -v
+```
+
+Expected: three assertion failures caused by the deliberately empty return values and missing `ValueError`; no import or syntax errors.
+
+- [ ] **Step 10: Implement the validator engine**
 
 Replace `scripts/validate_skill.py` with:
 
@@ -415,7 +464,7 @@ if __name__ == "__main__":
     raise SystemExit(main(sys.argv))
 ```
 
-- [ ] **Step 8: Run the validator unit tests**
+- [ ] **Step 11: Run the validator unit tests**
 
 Run:
 
@@ -425,7 +474,7 @@ python3 -m unittest tests.test_validator -v
 
 Expected: all three tests pass.
 
-- [ ] **Step 9: Commit the validator**
+- [ ] **Step 12: Commit the validator**
 
 ```bash
 git add scripts/validate_skill.py tests/test_validator.py
@@ -504,12 +553,56 @@ if __name__ == "__main__":
 Run:
 
 ```bash
-python3 -m unittest tests.test_skill_content.CoreSkillContractTests -v
+python3 -m unittest \
+  tests.test_skill_content.CoreSkillContractTests.test_core_files_exist -v
 ```
 
-Expected: `FAIL` because `SKILL.md` and the interview reference do not exist.
+Expected: `FAIL` because `SKILL.md` and the interview reference do not exist; no file-read errors occur.
 
-- [ ] **Step 3: Create `SKILL.md` with the complete orchestration contract**
+- [ ] **Step 3: Add the smallest files that satisfy existence**
+
+Create `SKILL.md`:
+
+```markdown
+---
+name: youth-game-builder
+description: Use when a learner says “我想创作一个游戏”.
+---
+
+# Youth Game Builder
+```
+
+Create `references/interview-protocol.md`:
+
+```markdown
+# Interview Protocol
+```
+
+- [ ] **Step 4: Verify file existence is GREEN**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_skill_content.CoreSkillContractTests.test_core_files_exist -v
+```
+
+Expected: `OK`.
+
+- [ ] **Step 5: Run the remaining core contracts and verify RED**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_skill_content.CoreSkillContractTests.test_core_state_and_gates_are_explicit \
+  tests.test_skill_content.CoreSkillContractTests.test_interview_protocol_defines_effective_rounds_and_linkage \
+  tests.test_skill_content.CoreSkillContractTests.test_child_privacy_boundary_is_present -v
+```
+
+Expected: assertion failures for missing state, gate, linkage, round, and privacy contracts; no file-read, syntax, or import errors.
+
+- [ ] **Step 6: Replace `SKILL.md` with the complete orchestration contract**
 
 The file must contain these sections and exact normative behavior:
 
@@ -619,7 +712,7 @@ Stop before acting if you are about to:
 Claim completion only when the approved GDD's acceptance criteria have evidence, browser checks have no unhandled errors, deliverables exist, and known limits are recorded.
 ```
 
-- [ ] **Step 4: Create `references/interview-protocol.md`**
+- [ ] **Step 7: Replace `references/interview-protocol.md` with the complete protocol**
 
 The file must implement the following complete protocol:
 
@@ -635,7 +728,7 @@ The file must implement the following complete protocol:
 10. Include the full privacy list: real name, school, class, address, contact details, account, photo, precise location.
 11. End with a compact checklist that prevents GDD transition unless 20 valid rounds, complete coverage, resolved conflicts, and feasible web scope are all true.
 
-- [ ] **Step 5: Run the core contract tests**
+- [ ] **Step 8: Run the core contract tests**
 
 Run:
 
@@ -645,7 +738,7 @@ python3 -m unittest tests.test_skill_content.CoreSkillContractTests -v
 
 Expected: all four tests pass.
 
-- [ ] **Step 6: Run the repository validator and observe the expected partial failure**
+- [ ] **Step 9: Run the repository validator and observe the expected partial failure**
 
 Run:
 
@@ -655,7 +748,7 @@ python3 scripts/validate_skill.py .
 
 Expected: exit `1`; errors mention only files intentionally scheduled for Tasks 4–5, such as `README.md`, `references/gdd-template.md`, `references/web-game-development.md`, and `evals/trigger-evals.json`. No error may mention the core or interview contracts.
 
-- [ ] **Step 7: Commit the core workflow**
+- [ ] **Step 10: Commit the core workflow**
 
 ```bash
 git add SKILL.md references/interview-protocol.md tests/test_skill_content.py
@@ -682,6 +775,9 @@ Add these classes before the `if __name__ == "__main__"` block in `tests/test_sk
 
 ```python
 class GDDContractTests(unittest.TestCase):
+    def test_gdd_reference_exists(self) -> None:
+        self.assertTrue((ROOT / "references/gdd-template.md").is_file())
+
     def test_gdd_template_has_all_numbered_sections(self) -> None:
         text = read("references/gdd-template.md")
         for number in range(1, 16):
@@ -701,6 +797,11 @@ class GDDContractTests(unittest.TestCase):
 
 
 class DevelopmentContractTests(unittest.TestCase):
+    def test_development_reference_exists(self) -> None:
+        self.assertTrue(
+            (ROOT / "references/web-game-development.md").is_file()
+        )
+
     def test_development_reference_has_required_deliverables(self) -> None:
         text = read("references/web-game-development.md")
         for phrase in (
@@ -726,13 +827,53 @@ Run:
 
 ```bash
 python3 -m unittest \
-  tests.test_skill_content.GDDContractTests \
-  tests.test_skill_content.DevelopmentContractTests -v
+  tests.test_skill_content.GDDContractTests.test_gdd_reference_exists \
+  tests.test_skill_content.DevelopmentContractTests.test_development_reference_exists -v
 ```
 
-Expected: `ERROR` or `FAIL` because both reference files are absent. This is the expected missing-feature failure, not a syntax or import error.
+Expected: two assertion `FAIL` results because both reference files are absent; no file-read, syntax, or import errors occur.
 
-- [ ] **Step 3: Create `references/gdd-template.md`**
+- [ ] **Step 3: Add the smallest files that satisfy existence**
+
+Create `references/gdd-template.md`:
+
+```markdown
+# GDD Template
+```
+
+Create `references/web-game-development.md`:
+
+```markdown
+# Web Game Development
+```
+
+- [ ] **Step 4: Verify reference existence is GREEN**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_skill_content.GDDContractTests.test_gdd_reference_exists \
+  tests.test_skill_content.DevelopmentContractTests.test_development_reference_exists -v
+```
+
+Expected: `OK`.
+
+- [ ] **Step 5: Run the remaining phase contracts and verify RED**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_skill_content.GDDContractTests.test_gdd_template_has_all_numbered_sections \
+  tests.test_skill_content.GDDContractTests.test_gdd_gate_requires_rounds_coverage_conflicts_and_approval \
+  tests.test_skill_content.DevelopmentContractTests.test_development_reference_has_required_deliverables \
+  tests.test_skill_content.DevelopmentContractTests.test_development_starts_only_from_approved_gdd -v
+```
+
+Expected: assertion failures for missing GDD sections, gates, development deliverables, accessibility, verification, and technology rules; no file-read, syntax, or import errors.
+
+- [ ] **Step 6: Replace `references/gdd-template.md` with the complete contract**
 
 The file must contain:
 
@@ -764,7 +905,7 @@ The file must contain:
 - Explicit negative examples: silence, “差不多”, chapter-only approval, and a request to keep discussing are not approval.
 - A final self-check for invented decisions, internal contradictions, unverifiable acceptance criteria, and unsafe data collection.
 
-- [ ] **Step 4: Create `references/web-game-development.md`**
+- [ ] **Step 7: Replace `references/web-game-development.md` with the complete contract**
 
 The file must contain:
 
@@ -794,7 +935,7 @@ game/
 9. `game/PLAYTEST.md` fields: approved GDD version, environment, commands, automated results, manual steps, viewport results, console result, acceptance matrix, known limitations.
 10. Original/programmatic/permitted asset rules and the prohibition on copying a living artist's distinctive style or unlicensed commercial assets.
 
-- [ ] **Step 5: Run all content tests**
+- [ ] **Step 8: Run all content tests**
 
 Run:
 
@@ -804,7 +945,7 @@ python3 -m unittest tests.test_skill_content -v
 
 Expected: all core, GDD, and development tests pass.
 
-- [ ] **Step 6: Commit the two phase contracts**
+- [ ] **Step 9: Commit the two phase contracts**
 
 ```bash
 git add references/gdd-template.md references/web-game-development.md tests/test_skill_content.py
@@ -860,12 +1001,50 @@ class RepositoryCompletenessTests(unittest.TestCase):
 Run:
 
 ```bash
-python3 -m unittest tests.test_skill_content.RepositoryCompletenessTests -v
+python3 -m unittest \
+  tests.test_skill_content.RepositoryCompletenessTests.test_readme_and_trigger_evals_exist -v
 ```
 
-Expected: failures because `README.md` and `evals/trigger-evals.json` do not exist.
+Expected: `FAIL` because `README.md` and `evals/trigger-evals.json` do not exist; no file-read errors occur.
 
-- [ ] **Step 3: Create the balanced trigger set**
+- [ ] **Step 3: Add the smallest files that satisfy existence**
+
+Create `README.md`:
+
+```markdown
+# Youth Game Builder Skill
+```
+
+Create `evals/trigger-evals.json`:
+
+```json
+[]
+```
+
+- [ ] **Step 4: Verify repository file existence is GREEN**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_skill_content.RepositoryCompletenessTests.test_readme_and_trigger_evals_exist -v
+```
+
+Expected: `OK`.
+
+- [ ] **Step 5: Run the remaining repository contracts and verify RED**
+
+Run:
+
+```bash
+python3 -m unittest \
+  tests.test_skill_content.RepositoryCompletenessTests.test_trigger_eval_set_is_balanced \
+  tests.test_skill_content.RepositoryCompletenessTests.test_readme_documents_the_exact_trigger_and_gates -v
+```
+
+Expected: assertion failures because the trigger set has 0 items and the README lacks the trigger, workflow gates, and validation command.
+
+- [ ] **Step 6: Replace the stub with the balanced trigger set**
 
 Create `evals/trigger-evals.json` as a JSON array containing exactly these query/label pairs:
 
@@ -894,7 +1073,7 @@ Create `evals/trigger-evals.json` as a JSON array containing exactly these query
 ]
 ```
 
-- [ ] **Step 4: Create `README.md`**
+- [ ] **Step 7: Replace `README.md` with complete documentation**
 
 Include these exact sections:
 
@@ -916,7 +1095,7 @@ python3 -m json.tool evals/trigger-evals.json >/dev/null
 
 9. GitHub repository link.
 
-- [ ] **Step 5: Add objective assertions to `evals/evals.json`**
+- [ ] **Step 8: Add objective assertions to `evals/evals.json`**
 
 For each eval, add an `assertions` array:
 
@@ -945,7 +1124,7 @@ For each eval, add an `assertions` array:
 
 Use the arrays above as values inside their matching eval objects; preserve `id`, `prompt`, `expected_output`, and `files`.
 
-- [ ] **Step 6: Run the complete deterministic suite**
+- [ ] **Step 9: Run the complete deterministic suite**
 
 Run:
 
@@ -959,7 +1138,7 @@ git diff --check
 
 Expected: every command exits `0`; validator prints `Skill validation passed.`.
 
-- [ ] **Step 7: Commit documentation and trigger coverage**
+- [ ] **Step 10: Commit documentation and trigger coverage**
 
 ```bash
 git add README.md evals/evals.json evals/trigger-evals.json tests/test_skill_content.py
