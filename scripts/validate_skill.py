@@ -20,7 +20,27 @@ REQUIRED_FILES = (
 CONTENT_CONTRACTS = {
     "SKILL.md": (
         (r"我想创作一个游戏", "missing exact game-creation trigger phrase"),
-        (r"valid_rounds\s*>=\s*20", "missing 20-round GDD gate"),
+        (
+            r"18\s*<=\s*valid_rounds\s*<\s*22",
+            "missing adaptive 18-22 interview gate",
+        ),
+        (r"valid_rounds\s*==\s*22", "missing round-22 hard cap"),
+        (
+            r"不得提出第\s*23\s*个设计问题",
+            "missing no-23rd-question rule",
+        ),
+        (
+            r"停止[\s\S]{0,500}stop_requested:\s*true[\s\S]{0,500}complete all remaining design fields",
+            "missing stop-and-default completion route",
+        ),
+        (
+            r"停止[\s\S]{0,200}不代表批准\s*GDD",
+            "missing stop-is-not-approval rule",
+        ),
+        (
+            r"game/index\.html[\s\S]{0,400}WebGL[\s\S]{0,200}Three\.js",
+            "missing Web-only stack with optional lightweight 3D",
+        ),
         (r"gdd_approved:\s*true", "missing explicit GDD approval gate"),
         (r"一次只问一个主要问题", "missing one-question rule"),
         (
@@ -54,6 +74,26 @@ CONTENT_CONTRACTS = {
         (r"连接点", "missing linked-question recipe"),
         (r"不知道", "missing learner uncertainty recovery"),
         (
+            r"第\s*18\s*轮是最早正常结束点[\s\S]{0,100}第\s*22\s*轮是绝对上限",
+            "missing adaptive interview window",
+        ),
+        (
+            r"不得提出第\s*23\s*个设计问题",
+            "missing no-23rd-question rule",
+        ),
+        (
+            r"Apply the stop-command procedure immediately\. Do not recover with another question\.",
+            "missing stop-without-another-question rule",
+        ),
+        (
+            r"generate a complete\s*`待批准`\s*GDD with\s*`gdd_approved:\s*false`",
+            "missing pending GDD state after stop",
+        ),
+        (
+            r"默认值不得覆盖已确认决定",
+            "missing learner-decision preservation during defaulting",
+        ),
+        (
             r"账本已有任何学习者提供的设计信息[\s\S]*第一个以及之后的每个设计问题",
             "missing conditional first-question linkage rule",
         ),
@@ -64,8 +104,16 @@ CONTENT_CONTRACTS = {
     ),
     "references/gdd-template.md": (
         (
-            r"valid_rounds\s*>=\s*20",
-            "missing 20-round generation gate",
+            r"18\s*<=\s*valid_rounds\s*<=\s*22",
+            "missing round-18 earliest generation gate",
+        ),
+        (
+            r"valid_rounds\s*==\s*22",
+            "missing round-22 hard cap",
+        ),
+        (
+            r"`coverage-complete`[\s\S]*`round-cap`[\s\S]*`stop`",
+            "missing all GDD completion routes",
         ),
         (
             r"六个覆盖主题均为\s*`complete`",
@@ -77,6 +125,14 @@ CONTENT_CONTRACTS = {
         ),
         (r"15\.\s*决策来源摘要", "missing decision traceability section"),
         (
+            r"`学习者决定\s*\|\s*系统默认`",
+            "missing learner/default provenance",
+        ),
+        (
+            r"状态为\s*`待批准`[\s\S]{0,100}gdd_approved:\s*false",
+            "missing pending state for generated GDD",
+        ),
+        (
             r"只有学生明确批准当前完整版本",
             "missing explicit current-version approval gate",
         ),
@@ -87,7 +143,40 @@ CONTENT_CONTRACTS = {
         ),
     ),
     "references/web-game-development.md": (
-        (r"HTML", "missing default web technology"),
+        (
+            r"静态、离线可运行的\s*Web\s*游戏[\s\S]{0,80}唯一入口为\s*`game/index\.html`",
+            "missing static Web entry point",
+        ),
+        (
+            r"原生\s*HTML5、CSS\s*和\s*JavaScript",
+            "missing native Web technology default",
+        ),
+        (
+            r"`game/index\.html`\s*必须能从文件管理器直接双击离线运行",
+            "missing direct offline startup",
+        ),
+        (
+            r"Windows 10/11：当前稳定版\s*Chrome、Edge\s*或\s*Firefox；[\s\S]{0,160}macOS：当前稳定版\s*Safari、Chrome\s*或\s*Firefox；",
+            "missing Windows/macOS compatibility target",
+        ),
+        (
+            r"WebGL[\s\S]{0,120}Three\.js",
+            "missing optional lightweight Web 3D stack",
+        ),
+        (
+            r"默认关闭实时阴影、复杂物理、全屏后处理、高开销粒子和大量透明物体",
+            "missing lightweight 3D rendering budget",
+        ),
+        (
+            r"不使用\s*WebGPU、WASM、GPU\s*计算",
+            "missing high-load technology exclusions",
+        ),
+        (r"不要求独立显卡", "missing integrated-graphics compatibility"),
+        (r"10\s*MB", "missing first-version resource budget"),
+        (
+            r"CDN[\s\S]{0,200}运行时网络请求",
+            "missing runtime network dependency exclusion",
+        ),
         (
             r"gdd_approved:\s*true",
             "missing gdd_approved: true entry gate",
