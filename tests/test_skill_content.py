@@ -161,6 +161,7 @@ class GDDContractTests(unittest.TestCase):
         for phrase in (
             "学习者决定 | 系统默认",
             "默认理由",
+            "没有学习者决定或系统默认来源的决定",
             "待批准",
             "gdd_approved: false",
         ):
