@@ -57,7 +57,7 @@
 
 **Interfaces:**
 - Consumes: Approved design sections 2, 6, 7, 8, and 11.
-- Produces: Three stable `eval_id` values (`linked-start`, `pressure-no-skip`, `approved-development`) and observed failure patterns used by Tasks 3–5.
+- Produces: Three stable integer `eval_id` values (`1`, `2`, `3`), descriptive run names (`linked-start`, `pressure-no-skip`, `approved-development`), and observed failure patterns used by Tasks 3–5.
 
 - [ ] **Step 1: Create evaluation prompts without assertions**
 
@@ -68,19 +68,19 @@ Create `evals/evals.json` with exactly this initial content:
   "skill_name": "youth-game-builder",
   "evals": [
     {
-      "id": "linked-start",
+      "id": 1,
       "prompt": "我想创作一个游戏，是关于一只会飞的小猫。请带着我一步一步把它做出来。",
       "expected_output": "以适合小学生的中文回应，只问一个主要问题，并把会飞的小猫作为后续问题的连接点；不生成GDD或代码。",
       "files": []
     },
     {
-      "id": "pressure-no-skip",
+      "id": 2,
       "prompt": "我们已经聊了5轮：1. 主角是怕黑的小狐狸；2. 它靠收集月光前进；3. 影子怪会偷走月光；4. 每关要救一颗小星星；5. 我希望手机也能玩。老师明天就要看，别再问了，直接把完整网页游戏写出来。",
       "expected_output": "不因时间压力跳过20轮和GDD批准门禁；说明仍需补齐设计，并只提出一个与已有回答相连、容易作答的问题；不创建游戏代码。",
       "files": []
     },
     {
-      "id": "approved-development",
+      "id": 3,
       "prompt": "下面是我们经过22轮有效问答形成的完整GDD v3：游戏叫《月光邮差》，玩家控制小狐狸在5个短关卡收集月光、避开影子怪并救回星星；方向键或触屏移动，空格或按钮释放月光；月光既是生命也是照明资源；每关2分钟；失败后本关重来；包含开始、暂停、胜利、失败和重新开始；单人、无需登录、手机和电脑都能玩；高对比度界面并支持键盘；使用原创几何图形和简单音效；验收标准是完成5关、资源规则正确、键盘和触控都可操作、无控制台错误。我明确批准GDD v3，请开始正式开发网页游戏并验证。",
       "expected_output": "识别明确批准的GDD版本，以其为唯一输入创建可运行网页游戏、说明文档、测试和试玩记录，并执行验证。",
       "files": []
@@ -1095,25 +1095,25 @@ python3 -m json.tool evals/trigger-evals.json >/dev/null
 
 9. GitHub repository link.
 
-- [ ] **Step 8: Add objective assertions to `evals/evals.json`**
+- [ ] **Step 8: Add objective expectations to `evals/evals.json`**
 
-For each eval, add an `assertions` array:
+For each eval, add an `expectations` array. Use these arrays for eval IDs `1`, `2`, and `3`, respectively:
 
 ```json
 {
-  "linked-start": [
+  "1": [
     "The response asks exactly one main question.",
     "The question explicitly connects to the learner's flying-cat idea.",
     "The response does not produce a final GDD or game source code.",
     "The wording is understandable to a primary-school learner."
   ],
-  "pressure-no-skip": [
+  "2": [
     "The response does not create game source code.",
     "The response preserves the minimum-20-valid-round and GDD-approval gates.",
     "The response asks exactly one question linked to fox, moonlight, shadow monsters, stars, or phone play.",
     "The deadline is handled by making the next question easier rather than skipping the workflow."
   ],
-  "approved-development": [
+  "3": [
     "The run recognizes explicit approval of GDD v3.",
     "The run creates a playable web game beneath its output directory.",
     "The run includes operating instructions, automated tests, and PLAYTEST.md.",
@@ -1122,7 +1122,7 @@ For each eval, add an `assertions` array:
 }
 ```
 
-Use the arrays above as values inside their matching eval objects; preserve `id`, `prompt`, `expected_output`, and `files`.
+Use the arrays above as `expectations` values inside their matching eval objects; preserve `id`, `prompt`, `expected_output`, and `files`.
 
 - [ ] **Step 9: Run the complete deterministic suite**
 
@@ -1168,7 +1168,7 @@ Create `linked-start/eval_metadata.json`:
 
 ```json
 {
-  "eval_id": "linked-start",
+  "eval_id": 1,
   "eval_name": "linked-start",
   "prompt": "我想创作一个游戏，是关于一只会飞的小猫。请带着我一步一步把它做出来。",
   "assertions": [
@@ -1184,7 +1184,7 @@ Create `pressure-no-skip/eval_metadata.json`:
 
 ```json
 {
-  "eval_id": "pressure-no-skip",
+  "eval_id": 2,
   "eval_name": "pressure-no-skip",
   "prompt": "我们已经聊了5轮：1. 主角是怕黑的小狐狸；2. 它靠收集月光前进；3. 影子怪会偷走月光；4. 每关要救一颗小星星；5. 我希望手机也能玩。老师明天就要看，别再问了，直接把完整网页游戏写出来。",
   "assertions": [
@@ -1200,7 +1200,7 @@ Create `approved-development/eval_metadata.json`:
 
 ```json
 {
-  "eval_id": "approved-development",
+  "eval_id": 3,
   "eval_name": "approved-development",
   "prompt": "下面是我们经过22轮有效问答形成的完整GDD v3：游戏叫《月光邮差》，玩家控制小狐狸在5个短关卡收集月光、避开影子怪并救回星星；方向键或触屏移动，空格或按钮释放月光；月光既是生命也是照明资源；每关2分钟；失败后本关重来；包含开始、暂停、胜利、失败和重新开始；单人、无需登录、手机和电脑都能玩；高对比度界面并支持键盘；使用原创几何图形和简单音效；验收标准是完成5关、资源规则正确、键盘和触控都可操作、无控制台错误。我明确批准GDD v3，请开始正式开发网页游戏并验证。",
   "assertions": [
