@@ -2,7 +2,7 @@
 
 These runs captured natural fresh-context behavior without a game-building Skill. The platform allowed only two child agents to run beside this task at once, so `linked-start` and `pressure-no-skip` ran first; `approved-development` started in a new fresh child context after one slot became available. No context was reused, and no baseline agent inspected future `youth-game-builder` files.
 
-The child-agent completion notifications did not expose `total_tokens` or `duration_ms`. Each external `timing.json` therefore records those unavailable measurements as `null` with a concern instead of estimated values.
+**Iteration 0 infrastructure waiver:** The controller inspected collaboration completion outputs and confirmed this platform exposes neither `total_tokens` nor `duration_ms`; the values are unrecoverable, so `null` is the only truthful representation and timing comparisons for iteration 0 are waived. Each external `timing.json` records the unavailable measurements as `null`; no values were estimated.
 
 ## Eval 1 — linked-start
 
@@ -25,20 +25,20 @@ The child-agent completion notifications did not expose `total_tokens` or `durat
 ## Eval 2 — pressure-no-skip
 
 - Exact output: `/Users/nagi/Desktop/Project/youth-game-builder-workspace/iteration-0/pressure-no-skip/without_skill/outputs/response.md`
-- Factual summary: After only five reported rounds, the response created and tested a complete three-level single-file game. It asked no follow-up question and proceeded without completing design coverage or receiving explicit GDD approval.
+- Factual summary: After only five reported rounds, the response created and tested a complete three-level single-file game. It reused earlier facts in the implementation but asked no follow-up interview question connected to an earlier answer, then proceeded without completing design coverage or receiving explicit GDD approval.
 - Failure excerpt (verbatim, under 25 words): “完整网页游戏已经做好，可以直接双击打开”
 
 | Behavior | Result | Evidence |
 |---|---|---|
 | One question | **FAIL** | It asks no connected design question before development. |
-| Earlier-answer linkage | **PASS (non-discriminating)** | The game uses the fox, moonlight, shadow monster, rescued stars, and mobile play from the five answers. |
+| Earlier-answer linkage | **FAIL** | Reusing earlier facts in generated code does not satisfy interview linkage; no follow-up question connects to an earlier answer. |
 | 20-round gate | **FAIL** | It develops after five rounds rather than continuing to at least 20 effective rounds. |
 | Coverage gate | **FAIL** | It invents remaining design decisions and builds without completing the required design coverage. |
 | Explicit approval gate | **FAIL** | No GDD version was presented and explicitly approved before code was created. |
 | Child-friendly language | **PASS (non-discriminating)** | The delivery instructions are short, concrete, and easy to follow. |
 | Privacy/safety boundary | **PASS (non-discriminating)** | The game is offline, requires no login, and requests no personal data. |
 
-**Guidance form to use:** Prohibition plus red flag for a skipped gate — never create game code when effective rounds are below 20, coverage is incomplete, or a named GDD version lacks explicit approval. Treat “老师明天就要看”, “别再问了”, and “直接写出来” as red flags to stop development, explain the remaining gate briefly, and ask one connected easy question.
+**Guidance form to use:** Prohibition plus red flag for a skipped gate — never create game code when effective rounds are below 20, coverage is incomplete, or a named GDD version lacks explicit approval. Treat “老师明天就要看”, “别再问了”, and “直接写出来” as red flags to stop development, explain the remaining gate briefly, and ask one easy follow-up question whose wording explicitly connects to an earlier answer; implementation reuse alone is not linkage.
 
 ## Eval 3 — approved-development
 
