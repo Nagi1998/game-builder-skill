@@ -248,6 +248,21 @@ class RepositoryValidationTests(unittest.TestCase):
             "references/web-game-development.md: missing lightweight 3D rendering budget",
         )
 
+    def test_removed_completed_iteration_preview_rule_is_reported(self) -> None:
+        with repository_copy() as repository:
+            self.replace_once(
+                repository,
+                "references/web-game-development.md",
+                "每次完成初版或一次迭代",
+                "每次完成开发工作",
+            )
+            errors = validate_skill.validate_repository(repository)
+
+        self.assert_error_contains(
+            errors,
+            "references/web-game-development.md: missing completed-iteration port-safe preview rule",
+        )
+
     def test_removed_gdd_coverage_or_conflict_gate_is_reported(self) -> None:
         mutations = (
             (

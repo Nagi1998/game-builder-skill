@@ -13,6 +13,14 @@ REQUIRED_FILES = (
     "references/interview-protocol.md",
     "references/gdd-template.md",
     "references/web-game-development.md",
+    "integrations/shared/interview-contract.md",
+    "integrations/cursor/game-builder-interview.mdc",
+    "integrations/copilot/copilot-instructions.md",
+    "integrations/gemini/GEMINI.md",
+    "integrations/claude/CLAUDE.md",
+    "integrations/agents/AGENTS.md",
+    "scripts/install_integration.py",
+    "scripts/preview_game.py",
     "evals/evals.json",
     "evals/trigger-evals.json",
 )
@@ -199,11 +207,35 @@ CONTENT_CONTRACTS = {
         (r"game/tests/", "missing automated tests deliverable"),
         (r"PLAYTEST\.md", "missing playtest deliverable"),
         (
+            r"每次完成初版或一次迭代[\s\S]{0,240}preview_game\.py[\s\S]{0,300}端口冲突[\s\S]{0,240}自动打开默认浏览器",
+            "missing completed-iteration port-safe preview rule",
+        ),
+        (
             r"现实危险[\s\S]*自残[\s\S]*仇恨[\s\S]*性内容[\s\S]*赌博[\s\S]*真钱[\s\S]*战利品箱[\s\S]*暗黑模式[\s\S]*剥削性变现",
             "missing child-content safety boundary",
         ),
     ),
+    "integrations/shared/interview-contract.md": (
+        (
+            r"首条回复[\s\S]{0,120}恰好一个设计问题",
+            "missing one-question start contract",
+        ),
+        (r"不得直接生成代码", "missing no-direct-code start rule"),
+        (r"18–22[\s\S]{0,80}有效回答", "missing interview round window"),
+    ),
 }
+
+ADAPTER_REQUIRED_PHRASES = (
+    "我想创作一个游戏",
+    "中文",
+    "恰好一个",
+    "设计问题",
+    "不得直接生成代码",
+    "18–22",
+    "停止",
+    "preview_game.py",
+    "端口冲突",
+)
 
 
 def parse_frontmatter(text: str) -> dict[str, str]:
@@ -366,6 +398,19 @@ def validate_repository(root: Path) -> list[str]:
         for pattern, message in contracts:
             if not re.search(pattern, text, re.I | re.MULTILINE):
                 errors.append(f"{relative_path}: {message}")
+
+    for relative_path in REQUIRED_FILES:
+        if not relative_path.startswith("integrations/"):
+            continue
+        path = root / relative_path
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8")
+        for phrase in ADAPTER_REQUIRED_PHRASES:
+            if phrase not in text:
+                errors.append(
+                    f"{relative_path}: missing cross-tool interview phrase: {phrase}"
+                )
 
     return errors
 

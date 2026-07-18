@@ -305,6 +305,19 @@ class DevelopmentContractTests(unittest.TestCase):
         ):
             self.assertIn(phrase, text)
 
+    def test_every_completed_iteration_uses_port_safe_auto_preview(self) -> None:
+        self.assertTrue((ROOT / "scripts/preview_game.py").is_file())
+        text = read("references/web-game-development.md")
+        for phrase in (
+            "每次完成初版或一次迭代",
+            "preview_game.py",
+            "端口冲突",
+            "自动打开默认浏览器",
+            "5173",
+            "不得替代离线双击",
+        ):
+            self.assertIn(phrase, text)
+
 
 class RepositoryCompletenessTests(unittest.TestCase):
     def test_readme_and_trigger_evals_exist(self) -> None:
@@ -330,6 +343,19 @@ class RepositoryCompletenessTests(unittest.TestCase):
             "Web 游戏",
             "轻量 3D",
             "python3 scripts/validate_skill.py .",
+        ):
+            self.assertIn(phrase, text)
+
+    def test_readme_documents_cross_tool_installation(self) -> None:
+        text = read("README.md")
+        for phrase in (
+            "跨工具",
+            "Cursor",
+            "GitHub Copilot",
+            "Gemini CLI",
+            "Claude Code",
+            "install_integration.py",
+            "不会覆盖",
         ):
             self.assertIn(phrase, text)
 
